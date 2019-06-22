@@ -1,7 +1,9 @@
 import React from 'react';
 import './App.css';
-// import store from './store'
-// import {Provider} from 'react-redux'
+import { connect } from 'react-redux'
+import { addModel } from './actions/addmodel'
+import ModelDetails from './components/ModelDetails'
+
 
 const data = [
   {
@@ -31,27 +33,51 @@ const data = [
 ]
 
 class App extends React.Component {
- 
-  updateSelection= (event) => {
-    const eventValue = event.target.value
-    this.setState({event: event});
-    console.log(eventValue)
-  
-  }
-  
-    render() {
-      return (
-        <div className="model">
-  
-          <select onChange={this.updateSelection}>
-            <option value=''>--pick a model</option>
-            { Object.keys(data).map(model => 
-            <option value={model.name}>{'${data[model].name} (${data[model].year}) '}</option>)}
-          </select>
-        </div>
-      );
-    }
-  }
-  
+  state = {}
 
-  export default App;
+  updateSelection = (event) => {
+   this.setState({event: event.target.value});
+  return
+  }
+
+  eventHandler = () => {
+    const model = {
+      name: this.state.event, ...data[this.state.event]
+    }
+    this.props.addModel(model)
+    console.log(model)
+  }
+
+  render() {
+   
+    return (
+     <div className="model">
+            <ModelDetails bla = {this.props.addModel}/>
+            <select onChange={this.updateSelection}>
+              <option value=''>--pick a model</option>
+              { Object.keys(data).map(model => 
+              <option value={model}>{`${data[model].name} (${data[model].year}) `}</option>)}
+            </select>
+
+            <button onClick={this.eventHandler}>Add</button>
+
+     </div>
+     
+           );
+      }
+}
+
+const mapStateToProps = (state) => {
+ 
+  return {
+    addModel: state.addModel
+  }
+ 
+}
+
+const mapDispatchToProps = {
+  addModel
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
